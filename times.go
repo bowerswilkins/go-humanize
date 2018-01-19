@@ -23,6 +23,10 @@ func Time(then time.Time) string {
 	return RelTime(then, time.Now(), "ago", "from now")
 }
 
+func CondensedTime(then time.Time) string {
+	return CondensedRelTime(then, time.Now(), "ago", "from now")
+}
+
 // A RelTimeMagnitude struct contains a relative time point at which
 // the relative format of time will switch to a new format string.  A
 // slice of these in ascending order by their "D" field is passed to
@@ -44,7 +48,27 @@ type RelTimeMagnitude struct {
 	DivBy  time.Duration
 }
 
-var defaultMagnitudes = []RelTimeMagnitude{
+var condensedMagnitudes = []RelTimeMagnitude{
+	{time.Second, "now", time.Second},
+	{2 * time.Second, "1s %s", 1},
+	{time.Minute, "%ds %s", time.Second},
+	{2 * time.Minute, "1m %s", 1},
+	{time.Hour, "%dm %s", time.Minute},
+	{2 * time.Hour, "1h %s", 1},
+	{Day, "%dh %s", time.Hour},
+	{2 * Day, "1d %s", 1},
+	{Week, "%dd %s", Day},
+	{2 * Week, "1w %s", 1},
+	{Month, "%dw %s", Week},
+	{2 * Month, "1m %s", 1},
+	{Year, "%dm %s", Month},
+	{18 * Month, "1y %s", 1},
+	{2 * Year, "2y %s", 1},
+	{LongTime, "%dy %s", Year},
+	{math.MaxInt64, "forever %s", 1},
+}
+
+var expandedMagnitudes = []RelTimeMagnitude{
 	{time.Second, "now", time.Second},
 	{2 * time.Second, "1 second %s", 1},
 	{time.Minute, "%d seconds %s", time.Second},
@@ -72,7 +96,11 @@ var defaultMagnitudes = []RelTimeMagnitude{
 //
 // RelTime(timeInPast, timeInFuture, "earlier", "later") -> "3 weeks earlier"
 func RelTime(a, b time.Time, albl, blbl string) string {
-	return CustomRelTime(a, b, albl, blbl, defaultMagnitudes)
+	return CustomRelTime(a, b, albl, blbl, expandedMagnitudes)
+}
+
+func CondensedRelTime(a, b time.Time, albl, blbl string) string {
+	return CustomRelTime(a, b, albl, blbl, condensedMagnitudes)
 }
 
 // CustomRelTime formats a time into a relative string.

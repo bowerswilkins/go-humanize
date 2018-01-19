@@ -37,6 +37,37 @@ func TestPast(t *testing.T) {
 	}.validate(t)
 }
 
+func TestCondensedPast(t *testing.T) {
+	now := time.Now()
+	testList{
+		{"now", CondensedTime(now), "now"},
+		{"1s ago", CondensedTime(now.Add(-1 * time.Second)), "1s ago"},
+		{"12s ago", CondensedTime(now.Add(-12 * time.Second)), "12s ago"},
+		{"30s ago", CondensedTime(now.Add(-30 * time.Second)), "30s ago"},
+		{"45s ago", CondensedTime(now.Add(-45 * time.Second)), "45s ago"},
+		{"1m ago", CondensedTime(now.Add(-63 * time.Second)), "1m ago"},
+		{"15m ago", CondensedTime(now.Add(-15 * time.Minute)), "15m ago"},
+		{"1h ago", CondensedTime(now.Add(-63 * time.Minute)), "1h ago"},
+		{"2h ago", CondensedTime(now.Add(-2 * time.Hour)), "2h ago"},
+		{"21h ago", CondensedTime(now.Add(-21 * time.Hour)), "21h ago"},
+		{"1d ago", CondensedTime(now.Add(-26 * time.Hour)), "1d ago"},
+		{"2d ago", CondensedTime(now.Add(-49 * time.Hour)), "2d ago"},
+		{"3d ago", CondensedTime(now.Add(-3 * Day)), "3d ago"},
+		{"1w ago (1)", CondensedTime(now.Add(-7 * Day)), "1w ago"},
+		{"1w ago (2)", CondensedTime(now.Add(-12 * Day)), "1w ago"},
+		{"2w ago", CondensedTime(now.Add(-15 * Day)), "2w ago"},
+		{"1m ago", CondensedTime(now.Add(-39 * Day)), "1m ago"},
+		{"3m ago", CondensedTime(now.Add(-99 * Day)), "3m ago"},
+		{"1y ago (1)", CondensedTime(now.Add(-365 * Day)), "1y ago"},
+		{"1y ago (1)", CondensedTime(now.Add(-400 * Day)), "1y ago"},
+		{"2y ago (1)", CondensedTime(now.Add(-548 * Day)), "2y ago"},
+		{"2y ago (2)", CondensedTime(now.Add(-725 * Day)), "2y ago"},
+		{"2y ago (3)", CondensedTime(now.Add(-800 * Day)), "2y ago"},
+		{"3y ago", CondensedTime(now.Add(-3 * Year)), "3y ago"},
+		{"long ago", CondensedTime(now.Add(-LongTime)), "forever ago"},
+	}.validate(t)
+}
+
 func TestReltimeOffbyone(t *testing.T) {
 	testList{
 		{"1w-1", RelTime(time.Unix(0, 0), time.Unix(7*24*60*60, -1), "ago", ""), "6 days ago"},
